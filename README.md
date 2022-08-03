@@ -1,9 +1,6 @@
 # macro-conversion-lib
 Macro conversion library for GD bots.
 
-todo'nt
-
-
 todo
   - [X] zbot
   - [X] zbot frame
