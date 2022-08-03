@@ -5,9 +5,9 @@ todo
   - [X] zbot frame
   - [X] url + frame
   - [X] rush
+  - [X] kdbot
   - [ ] ddhor
   - [ ] echo + frame
-  - [ ] kdbot
   - [ ] mhr
   - [ ] mhr json
   - [ ] replaybot + frame
