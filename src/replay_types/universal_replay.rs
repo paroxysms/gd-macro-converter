@@ -13,7 +13,6 @@ impl URL {
 
         file.read(&mut buffer).unwrap();
         let fps = f32::from_le_bytes(buffer);
-        println!("{}", fps);
 
         file.read(&mut single_buffer).unwrap();
         let replay_type = u8::from_le_bytes(single_buffer);
@@ -45,8 +44,6 @@ impl URL {
                 }
             }
 
-            println!("{} {} {}", frame, state & 1, state >> 1);
-
             actions.push((frame as f32, click, player2));
         }
 
@@ -74,11 +71,11 @@ impl URL {
 
     pub fn dump(actions: Vec<(f32, bool, bool)>, fps: f32, frame: bool, mut file: File) -> File {
         file.write_all(&(fps).to_le_bytes()).unwrap();
-        file.write_all(&(frame as i32).to_le_bytes()).unwrap();
+        file.write_all(&(frame as u8).to_le_bytes()).unwrap();
         for i in 0..actions.len() {
             let action = actions[i];
-            let state = action.1 as i32 + (action.2 as i32 * 2);
-            file.write_all(&(state as i32).to_le_bytes()).unwrap();
+            let state = action.1 as u8 + (action.2 as u8 * 2);
+            file.write_all(&(state as u8).to_le_bytes()).unwrap();
             if frame {
                 file.write_all(&(action.0 as u32).to_le_bytes()).unwrap();
             } else {

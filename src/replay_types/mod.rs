@@ -1,6 +1,9 @@
-mod zbot;
-mod tasbot;
-mod raw;
-mod rush;
-mod obot;
-mod megahack;
+pub(crate) mod frame_based;
+pub(crate) mod ddhor;
+pub(crate) mod echo;
+pub(crate) mod replaybot;
+pub(crate) mod tasbot;
+pub(crate) mod universal_replay;
+pub(crate) mod xbot;
+pub(crate) mod ybot;
+pub(crate) mod zbot;

@@ -10,7 +10,7 @@ pub struct zBotFrame {
 impl zBotFrame {
     pub fn parse(mut file: File) -> zBotFrame {
         let mut buffer: [u8; 4] = [0u8; 4];
-        let mut clicks_buffer: [u8; 2] = [0u8; 2];
+        let mut double_buffer: [u8; 2] = [0u8; 2];
 
         file.read(&mut buffer).unwrap();
         let delta = f32::from_le_bytes(buffer);
@@ -26,9 +26,9 @@ impl zBotFrame {
             if file.read(&mut buffer).unwrap() != 4 { break; }
             let frame = i32::from_le_bytes(buffer);
 
-            if file.read(&mut clicks_buffer).unwrap() != 2 { break; }
-            let click = clicks_buffer[0] == 0x31;
-            let player1 = clicks_buffer[1] == 0x31;
+            if file.read(&mut double_buffer).unwrap() != 2 { break; }
+            let click = double_buffer[0] == 0x31;
+            let player1 = double_buffer[1] == 0x31;
 
             actions.push((frame, click, !player1));
         }
@@ -59,20 +59,4 @@ impl zBotFrame {
         }
         file
     }
-
-    /*pub fn clean_actions(mut self) {
-        let mut last1 = false;
-        let mut last2 = false;
-        let mut removed_actions = 0;
-        let mut actions_final: Vec<(i32, bool, bool)> = Vec::new();
-
-        for i in 0..self.actions.len() {
-            let action = self.actions[i];
-            if action.1 == (if action.2 { last2 } else { last1 }) { removed_actions += 1; }
-            if action.2 { last2 = action.1 }
-            else { last1 = action.1 }
-            actions_final.push(action);
-        }
-        self.actions = actions_final;
-    }*/
 }
