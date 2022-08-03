@@ -7,14 +7,12 @@ todo
   - [X] url + frame
   - [X] rush
   - ddhor
-  - echo
-  - echo frame
+  - echo + frame
   - kdbot
   - mhr
   - mhr json
   - replaybot + frame
-  - tasbot
-  - tasbot frame
+  - tasbot + frame
   - xbot
   - xbot frame
   - ybot
