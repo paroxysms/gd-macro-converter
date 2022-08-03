@@ -42,3 +42,39 @@ mod tests {
         );
     }
 }
+
+// function cleanReplay(replay) {
+//     let last1 = false;
+//     let last2 = false;
+//     let n = 0;
+//     let final = [];
+//     replay.actions.forEach(action => {
+//         if (action.hold == (action.player2 ? last2 : last1)) {
+//             ++n;
+//             return;
+//         }
+//         if (action.player2) last2 = action.hold;
+//         else last1 = action.hold;
+//         final.push(action);
+//     });
+//     if (n) console.log(`Removed ${n} reduntant actions`);
+//     replay.actions = final;
+//     updateTxt();
+// }
+
+// const extensions = {
+//     replaybot: 'replay',
+//     replaybotf: 'replay',
+//     zbot: 'zbot',
+//     ybot: 'dat',
+//     ddhor: 'ddhor',
+//     'ddhor-new': 'ddhor',
+//     xbot: 'xbot',
+//     kdbot: 'kd',
+//     zbf: 'zbf',
+//     'xbot-frame': 'xbot',
+//     'ybot-frame': null, // why
+//     'url': 'replay',
+//     'url-f': 'replay',
+//     'rush': 'rsh',
+// 	   'mhrjson': 'json'

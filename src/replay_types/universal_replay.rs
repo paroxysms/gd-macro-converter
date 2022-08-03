@@ -53,22 +53,6 @@ impl URL {
         }
     }
 
-    // function dumpUniversalReplayFormat(replay, frame) {
-    //     const buffer = new ArrayBuffer(5 + replay.actions.length * 5);
-    //     const view = new DataView(buffer);
-    //     view.setFloat32(0, replay.fps, true);
-    //     view.setUint8(4, frame, true);
-    //     replay.actions.forEach((action, i) => {
-    //         const state = action.hold + action.player2 * 2;
-    //         view.setUint8(5 + i * 5, state);
-    //         if (frame)
-    //             view.setUint32(6 + i * 5, action.x, true);
-    //         else
-    //             view.setFloat32(6 + i * 5, action.x, true);
-    //     });
-    //     return buffer;
-    // }
-
     pub fn dump(actions: Vec<(f32, bool, bool)>, fps: f32, frame: bool, mut file: File) -> File {
         file.write_all(&(fps).to_le_bytes()).unwrap();
         file.write_all(&(frame as u8).to_le_bytes()).unwrap();
