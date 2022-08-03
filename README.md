@@ -12,8 +12,7 @@ todo
   - kdbot
   - mhr
   - mhr json
-  - replaybot
-  - replaybot frame
+  - replaybot + frame
   - tasbot
   - tasbot frame
   - xbot
