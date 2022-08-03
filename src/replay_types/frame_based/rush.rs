@@ -13,7 +13,6 @@ impl Rush {
 
         file.read(&mut double_buffer).unwrap();
         let fps = i16::from_le_bytes(double_buffer);
-        println!("{}", fps);
 
         let mut actions: Vec<(i32, bool, bool)> = Vec::new();
 
@@ -41,7 +40,7 @@ impl Rush {
         for i in 0..actions.len() {
             let action = actions[i];
             let state = action.1 as u8 + (action.2 as u8 * 2);
-            file.write_all(&(action.0 as i32).to_le_bytes()).unwrap();
+            file.write_all(&(action.0).to_le_bytes()).unwrap();
             file.write_all(&(state).to_le_bytes()).unwrap();
         }
         file

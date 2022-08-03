@@ -1,5 +1,4 @@
 use std::{io::{Read, Write}, fs::File};
-use crate::replay_types::zbot::zBot;
 
 pub struct URL {
     pub fps: f32,

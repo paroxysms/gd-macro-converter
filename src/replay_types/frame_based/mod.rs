@@ -1,4 +1,3 @@
-pub(crate) mod echo_frame;
 pub(crate) mod kdbot;
 pub(crate) mod mhr;
 pub(crate) mod mhr_json;
