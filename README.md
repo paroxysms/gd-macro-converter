@@ -6,6 +6,7 @@ todo
   - [X] url + frame
   - [X] rush
   - [X] kdbot
+  - [X] ybot
   - [ ] ddhor
   - [ ] echo + frame
   - [ ] mhr
@@ -14,6 +15,5 @@ todo
   - [ ] tasbot + frame
   - [ ] xbot
   - [ ] xbot frame
-  - [ ] ybot
-  - [ ] ybot frame
+  - [ ] ybot 2
   - [ ] zbot

@@ -3,17 +3,17 @@ mod replay_types;
 #[cfg(test)]
 mod tests {
     use std::fs::File;
-    use crate::replay_types::{frame_based::zbot_frame, frame_based::rush};
+    use crate::replay_types::{frame_based::rush, frame_based::kdbot};
 
     #[test]
-    fn zbf_to_rush() {
-        let in_zbf = File::open("macros/zbf/zbf.zbf").unwrap();
-        let out_rush = File::create("macros/rush/from_zbf.rsh").unwrap();
-        let mut replay = zbot_frame::zBotFrame::parse(in_zbf);
-        let rush_replay = rush::Rush::dump(
+    fn ybot_to_rush() {
+        let in_file = File::open("macros/ybot").unwrap();
+        let out_file = File::create("macros/from_ybot.rsh").unwrap();
+        let mut replay = rush::Rush::parse(in_file);
+        let replay = rush::Rush::dump(
             replay.actions.iter().map(|x| (x.0 as i32, x.1, x.2)).collect::<Vec<_>>(),
             replay.fps as i16,
-            out_rush,
+            out_file,
         );
     }
 }
