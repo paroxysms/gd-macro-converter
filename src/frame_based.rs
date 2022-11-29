@@ -322,10 +322,6 @@ impl MHRJson {
     }
 
     pub fn dump(actions: Vec<(i32, bool, bool)>, fps: f32, mut file: File) -> File {
-        /*file.write_all(
-            b"{\n \"_\": \"Mega Hack v7.1-GM1 Replay\", \n \"events\": [\n"
-        ).unwrap();*/
-
         file.write_all(
             b"{\n \"_\": \"Generated from macro converter\",\n \"events\": [\n"
         ).unwrap();
