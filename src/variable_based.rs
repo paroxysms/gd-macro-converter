@@ -1,11 +1,9 @@
-use std::{io::{Read, Write}, fs::File, fs};
+use std::{io::{Read, Write}, fs::File};
 
-// url
 pub struct URL {
     pub fps: f32,
     pub actions: Vec<(f32, bool, bool)>,
 }
-
 impl URL {
     pub fn parse(mut file: File, frame_based: bool) -> URL {
         let mut buffer: [u8; 4] = [0u8; 4];
@@ -25,7 +23,7 @@ impl URL {
             let click = state & 1 == 1;
             let player2 = state >> 1 == 1;
 
-            let mut frame: f32 = 0.0;
+            let mut frame: f32;
 
             if file.read(&mut buffer).unwrap() != 4 { break; }
             if replay_type == 2 {
@@ -66,6 +64,54 @@ impl URL {
                 file.write_all(&(action.0).to_le_bytes()).unwrap();
             }
         }
+        file
+    }
+}
+
+// replaybot
+pub struct ReplayBot {
+
+}
+impl ReplayBot {
+    pub fn parse(mut file: File) -> Self {
+        Self {
+
+        }
+    }
+
+    pub fn dump(actions: Vec<(i32, bool, bool)>, fps: u32, mut file: File) -> File {
+        file
+    }
+}
+
+// tasbot
+pub struct TASBot {
+
+}
+impl TASBot {
+    pub fn parse(mut file: File) -> Self {
+        Self {
+
+        }
+    }
+
+    pub fn dump(actions: Vec<(i32, bool, bool)>, fps: u32, mut file: File) -> File {
+        file
+    }
+}
+
+// echo
+pub struct Echo {
+
+}
+impl Echo {
+    pub fn parse(mut file: File) -> Self {
+        Self {
+
+        }
+    }
+
+    pub fn dump(actions: Vec<(i32, bool, bool)>, fps: u32, mut file: File) -> File {
         file
     }
 }

@@ -1,22 +1,17 @@
-use std::{io::{Read, Write}, fs::File, fs};
-use serde_json::json;
+use std::{io::{Read, Write}, fs::File};
 
-// plain text
 pub struct PlainText {
     pub fps: f32,
     pub actions: Vec<(f32, bool, bool)>,
 }
-
 impl PlainText {
     pub fn parse(mut file: File) -> Self {
-        let mut buffer = &mut String::new();
+        let buffer = &mut String::new();
         file.read_to_string(buffer).unwrap();
 
-        println!("buffer: {}", buffer);
         let lines: Vec<&str> = buffer.split("\n").collect();
 
-        println!("line: {}", lines.get(0).unwrap());
-        let fps = lines.get(0).unwrap().parse::<f32>().unwrap();
+        let fps = lines.get(0).unwrap().trim().parse::<f32>().unwrap();
         let mut actions: Vec<(f32, bool, bool)> = Vec::new();
 
         for line in lines {
@@ -46,14 +41,12 @@ impl PlainText {
     }
 }
 
-// zbot
 pub struct zBotFrame {
     pub delta: f32,
     pub speedhack: f32,
     pub fps: f32,
     pub actions: Vec<(i32, bool, bool)>,
 }
-
 impl zBotFrame {
     pub fn parse(mut file: File) -> Self {
         let mut buffer: [u8; 4] = [0u8; 4];
@@ -108,30 +101,61 @@ impl zBotFrame {
     }
 }
 
-// xbot
 pub struct xBotFrame {
-
+    pub fps: u32,
+    pub actions: Vec<(f32, bool, bool)>,
 }
-
 impl xBotFrame {
+    pub fn parse(mut file: File) -> Self {
+        let mut buffer = &mut String::new();
+        file.read_to_string(buffer).unwrap();
 
+        let lines: Vec<&str> = buffer.split("\n").collect();
+
+        let fps = lines.get(0).unwrap()[5..8].parse::<u32>().unwrap();
+        let mut actions: Vec<(f32, bool, bool)> = Vec::new();
+
+        for line in lines {
+            if !line.trim().is_empty() {
+                let data: Vec<&str> = line.split_whitespace().collect();
+
+                if data.get(0).unwrap() != &"fps:" && data.get(0).unwrap() != &"frames" {
+                    let state = data.get(0).unwrap().parse::<u8>().unwrap();
+                    let pos = data.get(1).unwrap().parse::<u32>().unwrap();
+
+                    let player2 = state > 1;
+                    let click = state % 2 == 1;
+                    let frame = pos as f32;
+
+                    actions.push((frame, click, player2));
+                }
+            }
+        }
+
+        Self {
+            fps,
+            actions,
+        }
+    }
+
+    pub fn dump(actions: Vec<(f32, bool, bool)>, fps: u32, mut file: File) -> File {
+        file.write_all(format!("fps: {}\nframes\n", fps).as_ref()).unwrap();
+        for action in actions {
+            file.write_all(format!("{} {}\n", action.1 as u8, action.0).as_ref()).unwrap();
+        }
+        file
+    }
 }
 
-// replaybot
-
-
-// tasbot
-
-
-// ybot
-pub struct yBot {
+pub struct yBotFrame {
     pub fps: f32,
     pub actions: Vec<(u32, bool, bool)>,
 }
-
-impl yBot {
+impl yBotFrame {
     pub fn parse(mut file: File) -> Self {
         let mut buffer: [u8; 4] = [0u8; 4];
+
+        file.read(&mut buffer).unwrap();
 
         file.read(&mut buffer).unwrap();
         let fps = f32::from_le_bytes(buffer);
@@ -145,12 +169,11 @@ impl yBot {
             let frame = u32::from_le_bytes(buffer);
 
             if file.read(&mut buffer).unwrap() != 4 { break; }
-            let info = u32::from_le_bytes(buffer);
+            let state = u32::from_le_bytes(buffer);
+            let click = state & 0b10 == 2;
+            let player2 = state & 0b01 == 1;
 
-            let hold = (info & 0b10_u32) == 1;
-            let player2 = (info & 0b01_u32) == 1;
-
-            actions.push((frame, hold, player2));
+            actions.push((frame, click, player2));
         }
 
         Self {
@@ -159,29 +182,25 @@ impl yBot {
         }
     }
 
-    pub fn dump(actions: Vec<(i32, bool, bool)>, fps: f32, mut file: File) -> File {
+    pub fn dump(actions: Vec<(u32, bool, bool)>, fps: f32, mut file: File) -> File {
         file.write_all(&("ybot".as_bytes())).unwrap();
         file.write_all(&(fps).to_le_bytes()).unwrap();
         file.write_all(&(actions.len() as u32).to_le_bytes()).unwrap();
         for action in 0..actions.len() {
             let action = actions[action];
             file.write_all(&(action.0).to_le_bytes()).unwrap();
+
             let info = action.2 as u8 + (action.1 as u8 * 2);
-            file.write_all(&(info as u32).to_le_bytes()).unwrap();
+            file.write_all(&(info as u32).to_be_bytes()).unwrap();
         }
         file
     }
 }
 
-// echo
-
-
-// rush
 pub struct Rush {
     pub fps: i16,
     pub actions: Vec<(i32, bool, bool)>,
 }
-
 impl Rush {
     pub fn parse(mut file: File) -> Self {
         let mut buffer: [u8; 4] = [0u8; 4];
@@ -217,6 +236,7 @@ impl Rush {
         for action in 0..actions.len() {
             let action = actions[action];
             let state = action.1 as u8 + (action.2 as u8 * 2);
+
             file.write_all(&(action.0).to_le_bytes()).unwrap();
             file.write_all(&(state).to_le_bytes()).unwrap();
         }
@@ -224,12 +244,10 @@ impl Rush {
     }
 }
 
-// kdbot
 pub struct KDBot {
     pub fps: f32,
     pub actions: Vec<(i32, bool, bool)>,
 }
-
 impl KDBot {
 
     pub fn parse(mut file: File) -> Self {
@@ -272,12 +290,10 @@ impl KDBot {
     }
 }
 
-// mhr json
 pub struct MHRJson {
     pub fps: f32,
     pub actions: Vec<(f32, bool, bool)>,
 }
-
 impl MHRJson {
     pub fn parse(mut file: File) -> Self {
         let mut buffer = String::new();
@@ -306,36 +322,38 @@ impl MHRJson {
     }
 
     pub fn dump(actions: Vec<(i32, bool, bool)>, fps: f32, mut file: File) -> File {
+        /*file.write_all(
+            b"{\n \"_\": \"Mega Hack v7.1-GM1 Replay\", \n \"events\": [\n"
+        ).unwrap();*/
+
         file.write_all(
-                b"{{
-                \t\"_\": \"Mega Hack v7.1-GM1 Replay\",
-                \t\"events\": ["
+            b"{\n \"_\": \"Generated from macro converter\",\n \"events\": [\n"
         ).unwrap();
 
-        for action in actions {
-            file.write_all(
-                format!(
-                    "\t\t{{
-                    \t\t\t\"a\": 0,
-                    \t\t\t\"down\": {},
-                    \t\t\t\"frame\": {},
-                    \t\t\t\"r\": 0,
-                    \t\t\t\"x\": 0,
-                    \t\t\t\"y\": 0,
-                    \t\t}},",
-                    action.1,
-                    action.0,
-                ).as_bytes()
-            ).unwrap();
+        for action in &actions {
+            let index = &actions.iter().position(|&r| r == *action).unwrap();
+            if index == &(actions.len() - 1) {
+                file.write_all(
+                    format!(
+                        "  {{\n   \"a\": 0,\n   \"down\": {},\n   \"frame\": {},\n   \"r\": 0,\n   \"x\": 0,\n   \"y\": 0\n  }}\n",
+                        action.1,
+                        action.0,
+                    ).as_bytes()
+                ).unwrap();
+            } else {
+                file.write_all(
+                    format!(
+                        "  {{\n   \"a\": 0,\n   \"down\": {},\n   \"frame\": {},\n   \"r\": 0,\n   \"x\": 0,\n   \"y\": 0\n  }},\n",
+                        action.1,
+                        action.0,
+                    ).as_bytes()
+                ).unwrap();
+            }
         }
 
         file.write_all(
             format!(
-                "\t],
-                \t\"meta\": {{
-                \t\t\"fps\": {}
-                \t}}
-                }}",
+                " ],\n \"meta\": {{\n  \"fps\": {}\n }}\n}}",
                 fps
             ).as_bytes()
         ).unwrap();
